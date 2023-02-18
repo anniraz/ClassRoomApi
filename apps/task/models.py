@@ -21,7 +21,19 @@ class AttachToTask(models.Model):
     task=models.ForeignKey(Task, on_delete=models.CASCADE,related_name='attach_task')
     link=models.CharField(max_length=1000,null=True,blank=True)
     image=models.ImageField(upload_to='task/',null=True,blank=True)
-    files=models.FileField(null=True,blank=True)
+    files=models.FileField(upload_to='task/',null=True,blank=True)
 
     def __str__(self):
         return f"{self.task}"
+
+
+class Homeworks(models.Model):
+    user=models.ForeignKey(User, on_delete=models.CASCADE)
+    task=models.ForeignKey(Task, on_delete=models.CASCADE)
+    link=models.CharField(max_length=1000,null=True,blank=True)
+    image=models.ImageField(upload_to='homeworks/',null=True,blank=True)
+    files=models.FileField(upload_to='homeworks/',null=True,blank=True)
+    time_published=models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} {self.task}"

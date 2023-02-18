@@ -6,12 +6,20 @@ from rest_framework.response import Response
 from apps.task.models import Task,AttachToTask
 from apps.task.serializers import TaskSerializers,AttachToTaskSerializers
 from apps.task.permissions import IsTaskOwner,IsTaskAttachOwner
-from apps.courses.models import Courses
+from apps.courses.models import Courses,CourseMembers
+
+
 
 
 class TaskApiViewSet(viewsets.ModelViewSet):
+    
     queryset=Task.objects.all()
     serializer_class=TaskSerializers
+
+    def get_queryset(self):
+        my_courses=[i.course.id for i in CourseMembers.objects.filter(user=self.request.user)]
+        return Task.objects.filter(Q(course__pk__in=my_courses)|Q(course__owner=self.request.user))
+
 
     def get_permissions(self):
         if self.action in ['update', 'partial_update', 'destroy',]:
@@ -25,6 +33,8 @@ class TaskApiViewSet(viewsets.ModelViewSet):
         if owner==request.user:
             return super().create(request,*args, **kwargs)
         return Response({"ERROR":"You are not the owner"})
+
+
 
 
 class AttachToTaskApiViewSet(viewsets.ModelViewSet):
