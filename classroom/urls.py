@@ -33,7 +33,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # apps
-    path('',include('apps.user.urls')),
+    path('user/',include('apps.user.urls')),
     path('task/',include('apps.task.urls')),
     path('courses/',include('apps.courses.urls')),
     # jwt
