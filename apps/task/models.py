@@ -33,7 +33,7 @@ class Homeworks(models.Model):
     image=models.ImageField(upload_to='homeworks/',null=True,blank=True)
     files=models.FileField(upload_to='homeworks/',null=True,blank=True)
     time_published=models.DateTimeField(auto_now_add=True)
-    points=models.PositiveIntegerField(default=100)
+    points=models.PositiveIntegerField(default=0)
 
 
     def __str__(self):

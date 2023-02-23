@@ -4,7 +4,7 @@ from rest_framework import viewsets,permissions
 from rest_framework.response import Response
 
 from apps.task.models import Task,AttachToTask,Homeworks
-from apps.task.serializers import TaskSerializers,AttachToTaskSerializers,HomeworksSerializers
+from apps.task.serializers import TaskSerializers,AttachToTaskSerializers,HomeworksSerializers,HomeworkCheckTeacher
 from apps.task.permissions import IsTaskOwner,IsTaskAttachOwner,HomeworksPermission
 from apps.courses.models import Courses,CourseMembers
 
@@ -82,3 +82,7 @@ class HomeworksApiView(viewsets.ModelViewSet):
             return super().create(request,*args, **kwargs)
         return Response({"ERROR":"You are not a student of this course"}) 
  
+
+class HomeWorkCheckTeacher(viewsets.ModelViewSet):
+    queryset=Homeworks.objects.all()
+    serializer_class=HomeworkCheckTeacher

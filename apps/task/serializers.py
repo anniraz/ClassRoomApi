@@ -21,3 +21,8 @@ class HomeworksSerializers(serializers.ModelSerializer):
         model=Homeworks
         fields='__all__'
         read_only_fields=('id','user','points',)
+
+class HomeworkCheckTeacher(serializers.ModelSerializer):
+     class Meta:
+        model=Homeworks
+        fields=('user','task','time_published','points',)

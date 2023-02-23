@@ -20,4 +20,10 @@ router.register(
     )
 
 
+router.register(
+    prefix ='homework/check',
+    viewset=HomeWorkCheckTeacher
+    )
+
+
 urlpatterns = router.urls
