@@ -9,7 +9,6 @@ class Task(models.Model):
     course=models.ForeignKey(Courses, on_delete=models.CASCADE,related_name='course_task')
     title=models.CharField(max_length=255)
     instructions=models.TextField()
-    points=models.PositiveIntegerField(default=100)
     subject=models.CharField(max_length=100,null=True,blank=True)
     deadline=models.DateTimeField(null=True,blank=True)
 
@@ -34,6 +33,8 @@ class Homeworks(models.Model):
     image=models.ImageField(upload_to='homeworks/',null=True,blank=True)
     files=models.FileField(upload_to='homeworks/',null=True,blank=True)
     time_published=models.DateTimeField(auto_now_add=True)
+    points=models.PositiveIntegerField(default=100)
+
 
     def __str__(self):
         return f"{self.user} {self.task}"

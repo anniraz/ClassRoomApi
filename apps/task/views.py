@@ -3,9 +3,9 @@ from django.db.models import Q
 from rest_framework import viewsets,permissions
 from rest_framework.response import Response
 
-from apps.task.models import Task,AttachToTask
-from apps.task.serializers import TaskSerializers,AttachToTaskSerializers
-from apps.task.permissions import IsTaskOwner,IsTaskAttachOwner
+from apps.task.models import Task,AttachToTask,Homeworks
+from apps.task.serializers import TaskSerializers,AttachToTaskSerializers,HomeworksSerializers
+from apps.task.permissions import IsTaskOwner,IsTaskAttachOwner,HomeworksPermission
 from apps.courses.models import Courses,CourseMembers
 
 
@@ -57,3 +57,28 @@ class AttachToTaskApiViewSet(viewsets.ModelViewSet):
             return super().create(request,*args, **kwargs)
         return Response({"ERROR":"You are not the owner"}) 
 
+
+
+class HomeworksApiView(viewsets.ModelViewSet):
+
+    queryset=Homeworks.objects.all()
+    serializer_class=HomeworksSerializers
+    permission_classes=[HomeworksPermission]
+
+    def get_queryset(self):
+        return Homeworks.objects.filter(user=self.request.user)
+
+
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user)
+        
+
+    def create(self, request, *args, **kwargs):
+        task = request.data['task']
+        course=Task.objects.get(id=task).course
+        members=[i.user for i in CourseMembers.objects.filter(course=course)]
+
+        if request.user in members:
+            return super().create(request,*args, **kwargs)
+        return Response({"ERROR":"You are not a student of this course"}) 
+ 

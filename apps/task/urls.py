@@ -14,4 +14,10 @@ router.register(
     viewset=AttachToTaskApiViewSet
     )
 
+router.register(
+    prefix ='homework',
+    viewset=HomeworksApiView
+    )
+
+
 urlpatterns = router.urls
