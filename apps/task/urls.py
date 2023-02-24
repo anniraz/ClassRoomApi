@@ -21,9 +21,9 @@ router.register(
 
 
 router.register(
-    prefix ='homework/check',
-    viewset=HomeWorkCheckTeacher
+    prefix ='check',
+    viewset=HomeWorkCheckApiView
     )
 
 
-urlpatterns = router.urls
+urlpatterns = router.urls   

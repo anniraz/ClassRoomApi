@@ -25,4 +25,5 @@ class HomeworksSerializers(serializers.ModelSerializer):
 class HomeworkCheckTeacher(serializers.ModelSerializer):
      class Meta:
         model=Homeworks
-        fields=('user','task','time_published','points',)
+        fields=('id','user','task','time_published','points',)
+        read_only_fields=('id','user','time_published',)

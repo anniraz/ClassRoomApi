@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-from apps.courses.models import CourseMembers
+from apps.courses.models import CourseMembers,Courses
 
 
 class IsTaskOwner(permissions.BasePermission):
@@ -26,3 +26,9 @@ class HomeworksPermission(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return bool(obj.user == request.user)
 
+
+class IsTeacher(permissions.BasePermission):
+    
+    def has_object_permission(self, request, view, obj):
+        members=[i.user for i in CourseMembers.objects.filter(course=obj.task.course) if i.is_teacher==True]
+        return bool(request.user in members or request.user== obj.task.course.owner)
