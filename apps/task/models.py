@@ -35,6 +35,14 @@ class Homeworks(models.Model):
     time_published=models.DateTimeField(auto_now_add=True)
     points=models.PositiveIntegerField(default=0)
 
-
     def __str__(self):
         return f"{self.user} {self.task}"
+
+
+class Comment(models.Model):
+    user=models.ForeignKey(User, on_delete=models.CASCADE)
+    to_homework=models.ForeignKey(Homeworks, on_delete=models.CASCADE,related_name='homework_comment')
+    text=models.TextField()
+
+    def __str__(self):
+        return f'{self.user}:{self.to_homework}'

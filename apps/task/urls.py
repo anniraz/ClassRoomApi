@@ -25,5 +25,10 @@ router.register(
     viewset=HomeWorkCheckApiView
     )
 
+router.register(
+    prefix='comment',
+    viewset=CommentApiView
+)
+
 
 urlpatterns = router.urls   

@@ -3,10 +3,12 @@ from django.db.models import Q
 from rest_framework import viewsets,permissions
 from rest_framework.response import Response
 
-from apps.task.models import Task,AttachToTask,Homeworks
-from apps.task.serializers import TaskSerializers,AttachToTaskSerializers,HomeworksSerializers,HomeworkCheckTeacher
+from apps.task.models import Task,AttachToTask,Homeworks,Comment
+from apps.task.serializers import TaskSerializers,AttachToTaskSerializers,HomeworksSerializers,HomeworkCheckTeacher,CommentSerializer
 from apps.task.permissions import IsTaskOwner,IsTaskAttachOwner,HomeworksPermission,IsTeacher
 from apps.courses.models import Courses,CourseMembers
+
+from apps.task.tasks import send_comment
 
 
 
@@ -26,6 +28,7 @@ class TaskApiViewSet(viewsets.ModelViewSet):
             return (IsTaskOwner(), )
         else:
             return (permissions.IsAuthenticated(),)  
+
 
     def create(self, request, *args, **kwargs):
         course = request.data['course']
@@ -90,3 +93,32 @@ class HomeWorkCheckApiView(viewsets.ModelViewSet):
     serializer_class=HomeworkCheckTeacher
     permission_classes=[IsTeacher]
 
+
+
+class CommentApiView(viewsets.ModelViewSet):
+    queryset=Comment.objects.all()
+    serializer_class=CommentSerializer
+
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user)
+
+
+    def create(self, request, *args, **kwargs):
+        hw_id=request.data['to_homework']
+        text=request.data['text']
+        homeworks=Homeworks.objects.get(id=hw_id)
+        task=Task.objects.get(id=homeworks.task.id)
+        course=Courses.objects.get(id=task.course.id)
+        course_members=[i.user for i in CourseMembers.objects.filter(course=course) if i.is_teacher==True]
+
+        if request.user in course_members or request.user==course.owner or request.user==homeworks.user:
+            send_comment.delay(
+                email=homeworks.user.email,
+                username=request.user.username,
+                text=text,
+                to_user=homeworks.user.username
+                )
+            return super().create(request,*args, **kwargs)
+        return Response({"ERROR":"You can't send message"}) 
+    
+    
