@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.utils import timezone
 
 from rest_framework import viewsets,permissions
 from rest_framework.response import Response
@@ -8,7 +9,7 @@ from apps.task.serializers import TaskSerializers,AttachToTaskSerializers,Homewo
 from apps.task.permissions import IsTaskOwner,IsTaskAttachOwner,HomeworksPermission,IsTeacher
 from apps.courses.models import Courses,CourseMembers
 
-from apps.task.tasks import send_comment
+from apps.task.tasks import send_comment,send_message
 
 
 
@@ -79,13 +80,18 @@ class HomeworksApiView(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         task = request.data['task']
         course=Task.objects.get(id=task).course
+        task1=Task.objects.get(id=task)
+
         members=[i.user for i in CourseMembers.objects.filter(course=course)]
 
         if request.user in members:
+            if (timezone.now() - task1.deadline)> timezone.timedelta(minutes=1):
+                send_message.delay(request.user.email,request.user.username)
             return super().create(request,*args, **kwargs)
+
+
         return Response({"ERROR":"You are not a student of this course"}) 
  
-
 
 
 class HomeWorkCheckApiView(viewsets.ModelViewSet):

@@ -16,3 +16,16 @@ def send_comment(email,username,text,to_user):
     fail_silently=False,
     
 )
+
+
+@app.task
+def send_message(email,username):
+    send_mail(
+    f'Hello {username}! ',
+    f'you submitted your assignment late',
+    settings.EMAIL_HOST_USER,
+    # 'zarinakudajberdikyzy@gmail.com',
+    [email],
+    fail_silently=False,
+    
+)
