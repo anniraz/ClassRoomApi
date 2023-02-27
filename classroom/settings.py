@@ -33,7 +33,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'celery',
     'rest_framework_simplejwt',
-    # "corsheaders",
+    "corsheaders",
 
 
     # apps
@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -129,6 +130,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+CORS_ALLOW_ALL_ORIGINS=True
 
 AUTH_USER_MODEL = 'user.User'
 
